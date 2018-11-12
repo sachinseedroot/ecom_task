@@ -9,8 +9,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,8 @@ import android.widget.TextView;
 import com.crashlytics.android.Crashlytics;
 import com.sachin.ecom.Activities.MainActivity;
 import com.sachin.ecom.Adapter.ProductListRecyclerAdapter;
+import com.sachin.ecom.Controller.MainApplication;
+import com.sachin.ecom.Model.CategoryDetails;
 import com.sachin.ecom.Model.ProductDetails;
 import com.sachin.ecom.R;
 import com.sachin.ecom.Utilities.TypeFaceHelper;
@@ -39,7 +43,12 @@ public class SingleDetailedFragment extends Fragment {
     private TextView textTitle;
     private TextView backTV;
     private RecyclerView rec_list_product;
-    private String response;
+    private String ids;
+    private TextView moTV;
+    private TextView msTV;
+    private TextView mvTV;
+    private TextView allTV;
+    private ArrayList<ProductDetails> productItemDetailsMain=new ArrayList<>();
 
     @Override
     public void onAttach(Context context) {
@@ -60,14 +69,14 @@ public class SingleDetailedFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_single, container, false);
-        response =  getArguments().getString("id");
+        ids = getArguments().getString("id");
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-            initialize(view);
+        initialize(view);
     }
 
     private void initialize(View view) {
@@ -75,6 +84,16 @@ public class SingleDetailedFragment extends Fragment {
 
         textTitle = (TextView) view.findViewById(R.id.titleTV);
         textTitle.setTypeface(TypeFaceHelper.getInstance(mcontext).getStyleTypeFace(TypeFaceHelper.FiraSansBold));
+
+        allTV = (TextView) view.findViewById(R.id.allTV);
+        allTV.setTypeface(TypeFaceHelper.getInstance(mcontext).getStyleTypeFace(TypeFaceHelper.FiraSansBold));
+        mvTV = (TextView) view.findViewById(R.id.mvTV);
+        mvTV.setTypeface(TypeFaceHelper.getInstance(mcontext).getStyleTypeFace(TypeFaceHelper.FiraSansBold));
+        msTV = (TextView) view.findViewById(R.id.msTV);
+        msTV.setTypeface(TypeFaceHelper.getInstance(mcontext).getStyleTypeFace(TypeFaceHelper.FiraSansBold));
+        moTV = (TextView) view.findViewById(R.id.moTV);
+        moTV.setTypeface(TypeFaceHelper.getInstance(mcontext).getStyleTypeFace(TypeFaceHelper.FiraSansBold));
+
         rec_list_product = (RecyclerView) view.findViewById(R.id.rec_list_product);
 
         backTV = (TextView) view.findViewById(R.id.backTV);
@@ -83,17 +102,98 @@ public class SingleDetailedFragment extends Fragment {
         backTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)mcontext).onBackPressed();
+                ((MainActivity) mcontext).onBackPressed();
             }
         });
         initProgressbar();
 
-        ParseJsonDataAsync parseJsonDataAsync = new ParseJsonDataAsync();
-        try {
-            parseJsonDataAsync.execute(new JSONArray(response));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        ParseJsonDataAsync parseJsonDataAsync = new ParseJsonDataAsync(0);
+        parseJsonDataAsync.execute(ids);
+
+        allTV.setTextColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+        allTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.white));
+
+        msTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                allTV.setTextColor(ContextCompat.getColor(mcontext, R.color.white));
+                allTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+
+
+                msTV.setTextColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+                msTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.white));
+
+                mvTV.setTextColor(ContextCompat.getColor(mcontext, R.color.white));
+                mvTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+
+                moTV.setTextColor(ContextCompat.getColor(mcontext, R.color.white));
+                moTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+
+                ParseJsonDataAsync parseJsonDataAsync = new ParseJsonDataAsync(3);
+                parseJsonDataAsync.execute(ids);
+            }
+        });
+
+        mvTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mvTV.setTextColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+                mvTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.white));
+
+                msTV.setTextColor(ContextCompat.getColor(mcontext, R.color.white));
+                msTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+
+                moTV.setTextColor(ContextCompat.getColor(mcontext, R.color.white));
+                moTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+
+                allTV.setTextColor(ContextCompat.getColor(mcontext, R.color.white));
+                allTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+
+                ParseJsonDataAsync parseJsonDataAsync = new ParseJsonDataAsync(1);
+                parseJsonDataAsync.execute(ids);
+            }
+        });
+
+        moTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                moTV.setTextColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+                moTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.white));
+
+                msTV.setTextColor(ContextCompat.getColor(mcontext, R.color.white));
+                msTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+
+                mvTV.setTextColor(ContextCompat.getColor(mcontext, R.color.white));
+                mvTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+
+                allTV.setTextColor(ContextCompat.getColor(mcontext, R.color.white));
+                allTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+
+                ParseJsonDataAsync parseJsonDataAsync = new ParseJsonDataAsync(2);
+                parseJsonDataAsync.execute(ids);
+            }
+        });
+
+        allTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                allTV.setTextColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+                allTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.white));
+
+                msTV.setTextColor(ContextCompat.getColor(mcontext, R.color.white));
+                msTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+
+                mvTV.setTextColor(ContextCompat.getColor(mcontext, R.color.white));
+                mvTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+
+                moTV.setTextColor(ContextCompat.getColor(mcontext, R.color.white));
+                moTV.setBackgroundColor(ContextCompat.getColor(mcontext, R.color.colorPrimary));
+
+                ParseJsonDataAsync parseJsonDataAsync = new ParseJsonDataAsync(0);
+                parseJsonDataAsync.execute(ids);
+            }
+        });
     }
 
     public void initProgressbar() {
@@ -127,47 +227,45 @@ public class SingleDetailedFragment extends Fragment {
         }
     }
 
-    public class ParseJsonDataAsync extends AsyncTask<JSONArray, Void, ArrayList<ProductDetails>> {
+    public class ParseJsonDataAsync extends AsyncTask<String, Void, ArrayList<ProductDetails>> {
+        int mType;
+
+        ParseJsonDataAsync(int type) {
+            mType = type;
+        }
 
         @Override
-        protected ArrayList<ProductDetails> doInBackground(JSONArray... jsonArrays) {
-            if (jsonArrays != null && jsonArrays[0]!=null && jsonArrays[0].length() > 0) {
-                ArrayList<ProductDetails> productItemDetailsList = new ArrayList<>();
-                for (int i = 0; i < jsonArrays[0].length(); i++) {
-                    JSONObject jsonObject = jsonArrays[0].optJSONObject(i);
-                    if (jsonObject != null) {
-                        ProductDetails productItemDetail = new ProductDetails();
-                        productItemDetailsList.add(productItemDetail);
-                    }
-                }
-                if (productItemDetailsList != null && productItemDetailsList.size() > 0) {
-                    Collections.sort(productItemDetailsList, new Comparator<ProductDetails>() {
-                        @Override
-                        public int compare(ProductDetails s1, ProductDetails s2) {
-                            return s1.p_name.compareToIgnoreCase(s2.p_name);
-                        }
-                    });
+        protected ArrayList<ProductDetails> doInBackground(String... strings) {
+            String id = strings[0];
+            ArrayList<ProductDetails> productDetails = new ArrayList<>();
+            if (!TextUtils.isEmpty(id)) {
+                String[] sepid = id.split(",");
+                if (sepid != null && sepid.length > 0) {
 
-                    return productItemDetailsList;
+                    for (int i = 0; i < sepid.length; i++) {
+                        String idcat = sepid[i];
+                        idcat = idcat.replace(",", "");
+                        if(mType==0) {
+                            productDetails.addAll(MainApplication.getDBinstance().myDAO().getProductsList(Integer.parseInt(idcat)));
+                        }else if(mType==1) {
+                            productDetails.addAll(MainApplication.getDBinstance().myDAO().getProductsListViewed(Integer.parseInt(idcat)));
+                        }else if(mType==2) {
+                            productDetails.addAll(MainApplication.getDBinstance().myDAO().getProductsListOrdered(Integer.parseInt(idcat)));
+                        }else if(mType==3) {
+                            productDetails.addAll(MainApplication.getDBinstance().myDAO().getProductsListShared(Integer.parseInt(idcat)));
+                        }
+                    }
+                } else {
+                    productDetails.addAll(MainApplication.getDBinstance().myDAO().getProductsList(Integer.parseInt(id)));
                 }
             }
-            return null;
+            return productDetails;
         }
 
         @Override
         protected void onPostExecute(final ArrayList<ProductDetails> productItemDetails) {
             super.onPostExecute(productItemDetails);
-            if (productItemDetails != null && productItemDetails.size() > 0) {
-                rec_list_product.setVisibility(View.VISIBLE);
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mcontext);
-                ProductListRecyclerAdapter listRecyclerAdapter = new ProductListRecyclerAdapter(mcontext, productItemDetails);
-                rec_list_product.setLayoutManager(linearLayoutManager);
-                rec_list_product.setAdapter(listRecyclerAdapter);
-
-            } else {
-                rec_list_product.setVisibility(View.GONE);
-                showAlertDialog(mcontext, "Oops!", "No product found!!!");
-            }
+           loadList(productItemDetails,mType);
         }
     }
 
@@ -178,7 +276,7 @@ public class SingleDetailedFragment extends Fragment {
                 .setNeutralButton("Dismiss", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
-                        ((MainActivity)mcontext).onBackPressed();
+//                        ((MainActivity) mcontext).onBackPressed();
                     }
                 });
 
@@ -187,5 +285,22 @@ public class SingleDetailedFragment extends Fragment {
         AlertDialog alert = builder.create();
         alert.setTitle(title);
         alert.show();
+    }
+
+    public void loadList(ArrayList<ProductDetails> productItemDetails,int mType){
+        if (productItemDetails != null && productItemDetails.size() > 0) {
+
+            rec_list_product.removeAllViews();
+            rec_list_product.setVisibility(View.VISIBLE);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mcontext);
+            productItemDetailsMain = productItemDetails;
+            ProductListRecyclerAdapter listRecyclerAdapter = new ProductListRecyclerAdapter(mcontext, productItemDetailsMain, mType);
+            rec_list_product.setLayoutManager(linearLayoutManager);
+            rec_list_product.setAdapter(listRecyclerAdapter);
+
+        } else {
+            rec_list_product.setVisibility(View.GONE);
+            showAlertDialog(mcontext, "Oops!", "No product found!!!");
+        }
     }
 }

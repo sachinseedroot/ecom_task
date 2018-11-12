@@ -84,7 +84,7 @@ public class CategoryFragment extends Fragment {
 
     private void initialize(View view) throws JSONException {
 //        initProgressbar();
-        LocalBroadcastManager.getInstance(mcontext).registerReceiver(broadCastData,new IntentFilter("id_pass"));
+        LocalBroadcastManager.getInstance(mcontext).registerReceiver(broadCastData,new IntentFilter("category"));
         textTitle = (TextView) view.findViewById(R.id.titleTV);
         textTitle.setTypeface(TypeFaceHelper.getInstance(mcontext).getStyleTypeFace(TypeFaceHelper.FiraSansBold));
 
@@ -168,7 +168,7 @@ public class CategoryFragment extends Fragment {
         }
     }
 
-    private void loadSubCategories(ArrayList<CategoryDetails> jsonArray) {
+    private void loadSubCategories(final ArrayList<CategoryDetails> jsonArray) {
 
         try {
             AlertDialog.Builder builderSingle = new AlertDialog.Builder(mcontext);
@@ -178,18 +178,26 @@ public class CategoryFragment extends Fragment {
             if (jsonArray != null && jsonArray.size() > 0) {
 
                 for( int i=0;i<jsonArray.size();i++){
-                    arrayAdapter.add(jsonArray.get(i).getName());
+                    arrayAdapter.add(jsonArray.get(i).getId()+" - "+jsonArray.get(i).getName());
                 }
+                arrayAdapter.add("ALL");
             }
 
             builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    String strName = arrayAdapter.getItem(which);
-//                    ProductDetails opCode = AppUtilities.getOperatorObject(strName.toUpperCase(), appSkeleton, countryCode.toUpperCase());
-//                    if (opCode != null) {
-//                        resendOTP(countryCode, mobNos, opCode.operator_code);
-//                    }
+
+                    if(arrayAdapter.getItem(which).toString().equalsIgnoreCase("ALL")){
+                        StringBuilder sb = new StringBuilder();
+                        for( int i=0;i<jsonArray.size();i++){
+                            sb.append(Integer.toString(jsonArray.get(i).getId()));
+                            sb.append(",");
+                        }
+                        ((MainActivity) mcontext).loadSingleDetailFragment(sb.toString());
+                    }else {
+                        int opCode = jsonArray.get(which).id;
+                        ((MainActivity) mcontext).loadSingleDetailFragment(Integer.toString(opCode));
+                    }
                 }
             });
             if (!((MainActivity) mcontext).isFinishing()) {

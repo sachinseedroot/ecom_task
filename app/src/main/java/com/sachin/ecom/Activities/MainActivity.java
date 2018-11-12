@@ -97,10 +97,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void loadSingleDetailFragment(JSONArray jsonArray) {
+    public void loadSingleDetailFragment(String ids) {
         try {
 
-            singleDetailFragment = SingleDetailedFragment.newInstance(jsonArray.toString());
+            singleDetailFragment = SingleDetailedFragment.newInstance(ids);
 
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.setCustomAnimations(R.anim.enter_from_right, R.anim.hold);

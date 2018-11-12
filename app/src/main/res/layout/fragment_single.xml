@@ -37,26 +37,38 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Most Viewed"
+            android:text="All"
             android:textColor="@color/white"
             android:background="@color/colorAccent"
             android:gravity="center"
+            android:id="@+id/allTV"
             android:layout_weight="1"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Most Ordered"
+            android:text="Most\nViewed"
             android:textColor="@color/white"
             android:background="@color/colorAccent"
             android:gravity="center"
+            android:id="@+id/mvTV"
             android:layout_weight="1"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Most Shared"
+            android:text="Most\nOrdered"
             android:textColor="@color/white"
             android:background="@color/colorAccent"
             android:gravity="center"
+            android:id="@+id/moTV"
+            android:layout_weight="1"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Most\nShared"
+            android:textColor="@color/white"
+            android:background="@color/colorAccent"
+            android:gravity="center"
+            android:id="@+id/msTV"
             android:layout_weight="1"/>
     </LinearLayout>
 

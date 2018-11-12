@@ -7,20 +7,21 @@ import org.json.JSONObject;
 
 public class RankingProductsModel{
 
-    public String rankingName;
     public int rankingProductID;
-    public int rankingProductViewCount;
+    public int rankingCount;
 
 
-    public RankingProductsModel(JSONObject jsonObject){
-        rankingName = jsonObject.optString("ranking");
-//        name = jsonObject.optString("name");
+    public RankingProductsModel(JSONObject jsonObject,int type){
+
+        if(type==1){
+            rankingProductID = jsonObject.optInt("id");
+            rankingCount = jsonObject.optInt("view_count");
+        }else if(type==2){
+            rankingProductID = jsonObject.optInt("id");
+            rankingCount = jsonObject.optInt("order_count");
+        }else if(type==3){
+            rankingProductID = jsonObject.optInt("id");
+            rankingCount = jsonObject.optInt("shares");
+        }
     }
-
-    public RankingProductsModel(Parcel in){
-
-//        this.id = in.readInt();
-//        this.name = in.readString();
-    }
-
 }

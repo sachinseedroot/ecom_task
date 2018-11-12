@@ -3,6 +3,7 @@ package com.sachin.ecom.Adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,9 +54,10 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
                         productCategoryDetails.get(position).getChildCategories().length() > 0) {
                     Intent intent = new Intent("category");
                     intent.putExtra("id",productCategoryDetails.get(position).getChildCategories().toString());
-                    context.sendBroadcast(intent);
+//                    context.sendBroadcast(intent);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }else{
-//                    ((MainActivity) context).loadSingleDetailFragment(productCategoryDetails.get(position).productListArray);
+                    ((MainActivity) context).loadSingleDetailFragment(Integer.toString(productCategoryDetails.get(position).getId()));
                 }
             }
         });

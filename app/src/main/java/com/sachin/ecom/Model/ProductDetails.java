@@ -20,15 +20,13 @@ import java.io.ObjectOutputStream;
 @Entity(tableName = "ProductTable")
 public class ProductDetails{
 
-    @PrimaryKey(autoGenerate = true)
-    public int id;
-
     @ColumnInfo(name = "product_id")
     public int p_id;
 
     @ColumnInfo(name = "product_name")
     public String p_name;
 
+    @PrimaryKey
     @ColumnInfo(name = "product_v_id")
     public int v_id;
 
@@ -42,26 +40,28 @@ public class ProductDetails{
     public int v_price;
 
     @ColumnInfo(name = "v_most_viewed")
-    public String v_most_viewed;
+    public int v_most_viewed;
 
 
     @ColumnInfo(name = "v_most_ordered")
-    public String v_most_ordered;
+    public int v_most_ordered;
 
 
     @ColumnInfo(name = "v_most_shared")
-    public String v_most_shared;
+    public int v_most_shared;
 
     @ColumnInfo(name = "category_name")
     public String category_name;
 
+    @ColumnInfo(name = "category_id")
+    public int category_id;
 
-    public int getId() {
-        return id;
+    public int getCategory_id() {
+        return category_id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCategory_id(int category_id) {
+        this.category_id = category_id;
     }
 
     public int getP_id() {
@@ -112,27 +112,27 @@ public class ProductDetails{
         this.v_price = v_price;
     }
 
-    public String getV_most_viewed() {
+    public int getV_most_viewed() {
         return v_most_viewed;
     }
 
-    public void setV_most_viewed(String v_most_viewed) {
+    public void setV_most_viewed(int v_most_viewed) {
         this.v_most_viewed = v_most_viewed;
     }
 
-    public String getV_most_ordered() {
+    public int getV_most_ordered() {
         return v_most_ordered;
     }
 
-    public void setV_most_ordered(String v_most_ordered) {
+    public void setV_most_ordered(int v_most_ordered) {
         this.v_most_ordered = v_most_ordered;
     }
 
-    public String getV_most_shared() {
+    public int getV_most_shared() {
         return v_most_shared;
     }
 
-    public void setV_most_shared(String v_most_shared) {
+    public void setV_most_shared(int v_most_shared) {
         this.v_most_shared = v_most_shared;
     }
 

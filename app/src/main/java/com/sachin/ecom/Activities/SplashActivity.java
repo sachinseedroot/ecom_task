@@ -22,6 +22,7 @@ import com.sachin.ecom.MVP.MainMVP;
 import com.sachin.ecom.MVP.Presenter;
 import com.sachin.ecom.Model.CategoryDetails;
 import com.sachin.ecom.Model.ProductDetails;
+import com.sachin.ecom.Model.RankingProductsModel;
 import com.sachin.ecom.R;
 import com.sachin.ecom.Utilities.AppUtilities;
 import com.sachin.ecom.Utilities.TypeFaceHelper;
@@ -83,28 +84,34 @@ public class SplashActivity extends AppCompatActivity implements MainMVP.view {
     public void getdata(JSONObject jsonArray) {
 
 
-        JSONArray jsonArrays = jsonArray.optJSONArray("categories");
-        ParseJsonDataAsync parseJsonDataAsync = new ParseJsonDataAsync();
-        parseJsonDataAsync.execute(jsonArrays);
+        ParseJsonDataAsync parseJsonDataAsync = new ParseJsonDataAsync(jsonArray);
+        parseJsonDataAsync.execute();
 
     }
 
-    public class ParseJsonDataAsync extends AsyncTask<JSONArray, Void, ArrayList<CategoryDetails>> {
+    public class ParseJsonDataAsync extends AsyncTask<Void, Void, ArrayList<CategoryDetails>> {
+
+        JSONObject mObj;
+
+        ParseJsonDataAsync(JSONObject mJson) {
+            mObj = mJson;
+        }
 
         @Override
-        protected ArrayList<CategoryDetails> doInBackground(JSONArray... jsonArrays) {
+        protected ArrayList<CategoryDetails> doInBackground(Void... voids) {
+            JSONArray jsonArrays = mObj.optJSONArray("categories");
             ArrayList<CategoryDetails> categoryDetails = new ArrayList<>();
-            if (jsonArrays != null && jsonArrays[0] != null && jsonArrays[0].length() > 0) {
+            if (jsonArrays != null && jsonArrays != null && jsonArrays.length() > 0) {
 
-                for (int i = 0; i < jsonArrays[0].length(); i++) {
-                    JSONObject jsonObject = jsonArrays[0].optJSONObject(i);
+                for (int i = 0; i < jsonArrays.length(); i++) {
+                    JSONObject jsonObject = jsonArrays.optJSONObject(i);
                     if (jsonObject != null) {
                         CategoryDetails productItemDetail = new CategoryDetails();
                         productItemDetail.setId(jsonObject.optInt("id"));
                         productItemDetail.setName(jsonObject.optString("name").trim());
                         JSONArray jsonArray = jsonObject.optJSONArray("child_categories");
                         JSONArray products_list = jsonObject.optJSONArray("products");
-                        loadProductList(productItemDetail.getName(),products_list);
+                        loadProductList(productItemDetail.getName(), productItemDetail.getId(), products_list);
                         if (jsonArray != null && jsonArray.length() > 0) {
                             StringBuilder sb = new StringBuilder();
                             for (int k = 0; k < jsonArray.length(); k++) {
@@ -114,7 +121,7 @@ public class SplashActivity extends AppCompatActivity implements MainMVP.view {
                             }
                             productItemDetail.setChildCategories(sb.toString());
                         }
-                        if(productItemDetail!=null) {
+                        if (productItemDetail != null) {
                             MainApplication.getDBinstance().myDAO().addCategories(productItemDetail);
                             categoryDetails.add(productItemDetail);
                         }
@@ -128,48 +135,104 @@ public class SplashActivity extends AppCompatActivity implements MainMVP.view {
         protected void onPostExecute(final ArrayList<CategoryDetails> productItemDetails) {
             super.onPostExecute(productItemDetails);
 
-            if(productItemDetails!=null) {
+            if (productItemDetails != null) {
 
-                Intent i = new Intent(SplashActivity.this, MainActivity.class);
-                startActivity(i);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.hold);
-                finish();
-            }else{
-                Toast.makeText(mcontext,"Something went wrong...",Toast.LENGTH_SHORT).show();
+                ParseJsonDataRankings parseJsonDataRankings = new ParseJsonDataRankings(mObj);
+                parseJsonDataRankings.execute();
+            } else {
+                Toast.makeText(mcontext, "Something went wrong...", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
 
-   public ProductDetails loadProductList(String categoryname,JSONArray jsonArray){
-        if(jsonArray!=null){
-            for(int i=0;i<jsonArray.length();i++){
+    public ProductDetails loadProductList(String categoryname, int cid, JSONArray jsonArray) {
+        ProductDetails productDetails = new ProductDetails();
+        if (jsonArray != null) {
+            for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.optJSONObject(i);
                 if (jsonObject != null) {
-                    ProductDetails productDetails = new ProductDetails();
                     productDetails.setP_id(jsonObject.optInt("id"));
                     productDetails.setP_name(jsonObject.optString("name"));
                     productDetails.setCategory_name(categoryname);
+                    productDetails.setCategory_id(cid);
                     JSONArray variants = jsonObject.optJSONArray("variants");
-                    if(variants!=null && variants.length()>0){
-                        for(int k=0;k<variants.length();k++){
+                    if (variants != null && variants.length() > 0) {
+                        for (int k = 0; k < variants.length(); k++) {
                             JSONObject varObject = variants.optJSONObject(k);
-                            if(varObject!=null){
+                            if (varObject != null) {
                                 productDetails.setV_id(varObject.optInt("id"));
                                 productDetails.setV_color(varObject.optString("color"));
                                 productDetails.setV_size(varObject.optInt("size"));
                                 productDetails.setV_price(varObject.optInt("price"));
-                                System.out.println("----"+categoryname+" - "+productDetails.getP_name()+"- v"+productDetails.getV_id()+" "+productDetails.getV_color());
+                                System.out.println("----" + categoryname + " - " + productDetails.getP_name() + "- v" + productDetails.getV_id() + " " + productDetails.getV_color());
                                 MainApplication.getDBinstance().myDAO().addProducts(productDetails);
                             }
                         }
-                    }else{
+                    } else {
                         MainApplication.getDBinstance().myDAO().addProducts(productDetails);
                     }
-                    return productDetails;
+
                 }
             }
         }
-        return null;
-   }
+        return productDetails;
+    }
+
+    public class ParseJsonDataRankings extends AsyncTask<Void, Void, Void> {
+        JSONObject mRanking;
+
+        ParseJsonDataRankings(JSONObject jsonObject) {
+            mRanking = jsonObject;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            JSONArray jsonArrays = mRanking.optJSONArray("rankings");
+            if (jsonArrays != null && jsonArrays != null && jsonArrays.length() > 0) {
+
+                for (int i = 0; i < jsonArrays.length(); i++) {
+                    JSONObject jsonObject = jsonArrays.optJSONObject(i);
+                    if (jsonObject != null) {
+                        String name = jsonObject.optString("ranking");
+                        JSONArray productsArray = jsonObject.optJSONArray("products");
+                        if(name.toLowerCase().contains("viewed")){
+                            saveRankings(productsArray,1);
+                        }else if(name.toLowerCase().contains("ordered")){
+                            saveRankings(productsArray,2);
+                        }else if(name.toLowerCase().contains("shared")){
+                            saveRankings(productsArray,3);
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Intent i = new Intent(SplashActivity.this, MainActivity.class);
+            startActivity(i);
+            overridePendingTransition(R.anim.enter_from_right, R.anim.hold);
+            finish();
+        }
+    }
+
+    public void saveRankings(JSONArray jsonArray,int type){
+        if(jsonArray!=null && jsonArray.length()>0){
+            for(int i=0;i<jsonArray.length();i++){
+                RankingProductsModel rankingProductsModel = new RankingProductsModel(jsonArray.optJSONObject(i),type);
+                ProductDetails productDetails = MainApplication.getDBinstance().myDAO().getProductById(rankingProductsModel.rankingProductID);
+                if(type==1){
+                    productDetails.setV_most_viewed(rankingProductsModel.rankingCount);
+                }else if(type==2){
+                    productDetails.setV_most_ordered(rankingProductsModel.rankingCount);
+                }else if(type==3){
+                    productDetails.setV_most_shared(rankingProductsModel.rankingCount);
+                }
+                MainApplication.getDBinstance().myDAO().upDateProducts(productDetails);
+            }
+        }
+    }
 }

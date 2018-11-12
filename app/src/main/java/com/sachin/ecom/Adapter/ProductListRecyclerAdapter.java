@@ -21,9 +21,11 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<ProductList
     private final Picasso picasso;
     private final Typeface typeFace_FA, typeFace_Bold, typeFace_Light;
     private ArrayList<ProductDetails> productProductDetails;
+    private int listType;
 
-    public ProductListRecyclerAdapter(Context act, ArrayList<ProductDetails> details) {
+    public ProductListRecyclerAdapter(Context act, ArrayList<ProductDetails> details,int type) {
 
+        this.listType = type;
         this.context = act;
         this.productProductDetails = details;
         this.picasso = Picasso.get();
@@ -42,7 +44,26 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<ProductList
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        holder.rec_item_title.setText(productProductDetails.get(position).getP_name().toUpperCase());
+        int ranking=0;
+        if(listType==1){
+            ranking = productProductDetails.get(position).v_most_viewed;
+        }else if(listType==2){
+            ranking = productProductDetails.get(position).v_most_ordered;
+        }else if(listType==3){
+            ranking = productProductDetails.get(position).v_most_shared;
+        }
+
+        if(listType==0){
+            holder.rec_item_title.setText(productProductDetails.get(position).getP_name() +"|"+
+                    productProductDetails.get(position).getV_color()+ "|"+
+                    productProductDetails.get(position).getV_size()+"|"+
+                    productProductDetails.get(position).getV_price());
+        }else{
+            holder.rec_item_title.setText(productProductDetails.get(position).getP_name() +"|"+
+                    productProductDetails.get(position).getV_color()+ "|"+
+                    productProductDetails.get(position).getV_size()+"|"+
+                    productProductDetails.get(position).getV_price()+"| Rn:"+ranking);
+        }
         holder.rec_item_title.setTypeface(typeFace_Bold);
     }
 
