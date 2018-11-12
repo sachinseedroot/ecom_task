@@ -3,6 +3,7 @@ package com.sachin.ecom.Utilities;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -13,6 +14,8 @@ import com.android.volley.ParseError;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+
+import java.util.UUID;
 
 
 public class AppUtilities {
@@ -56,5 +59,14 @@ public class AppUtilities {
         } else {
             return "Other Error - " + error.getMessage();
         }
+    }
+
+    public static Typeface applyTypeFace(Context context, String fontName) {
+        Typeface typeface = Typeface.createFromAsset(context.getApplicationContext().getAssets(), fontName);
+        return typeface;
+    }
+
+    public static String getUniqueID(){
+        return UUID.randomUUID().toString();
     }
 }

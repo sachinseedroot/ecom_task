@@ -1,5 +1,8 @@
 package com.sachin.ecom.Model;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -14,55 +17,130 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 
-public class ProductDetails implements Parcelable{
+@Entity(tableName = "ProductTable")
+public class ProductDetails{
 
+    @PrimaryKey(autoGenerate = true)
     public int id;
-    public String name;
+
+    @ColumnInfo(name = "product_id")
+    public int p_id;
+
+    @ColumnInfo(name = "product_name")
+    public String p_name;
+
+    @ColumnInfo(name = "product_v_id")
+    public int v_id;
+
+    @ColumnInfo(name = "v_color")
+    public String v_color;
+
+    @ColumnInfo(name = "v_size")
+    public int v_size;
+
+    @ColumnInfo(name = "v_price")
+    public int v_price;
+
+    @ColumnInfo(name = "v_most_viewed")
+    public String v_most_viewed;
 
 
-    public ProductDetails(JSONObject jsonObject){
-        id = jsonObject.optInt("id");
-        name = jsonObject.optString("name");
+    @ColumnInfo(name = "v_most_ordered")
+    public String v_most_ordered;
+
+
+    @ColumnInfo(name = "v_most_shared")
+    public String v_most_shared;
+
+    @ColumnInfo(name = "category_name")
+    public String category_name;
+
+
+    public int getId() {
+        return id;
     }
 
-    public ProductDetails(Parcel in){
-
-        this.id = in.readInt();
-        this.name = in.readString();
+    public void setId(int id) {
+        this.id = id;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public int getP_id() {
+        return p_id;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.id);
-        dest.writeString(this.name);
-    }
-    public static final Creator CREATOR = new Creator() {
-        public ProductDetails createFromParcel(Parcel in) {
-            return new ProductDetails(in);
-        }
-
-        public ProductDetails[] newArray(int size) {
-            return new ProductDetails[size];
-        }
-    };
-
-
-    public static void writeObject(Context context, String key, String object) throws IOException {
-        ObjectOutput out = new ObjectOutputStream(new FileOutputStream(new File(context.getCacheDir(),"")+key+".srl"));
-        out.writeObject( object );
-        out.close();
+    public void setP_id(int p_id) {
+        this.p_id = p_id;
     }
 
-    public static Object readObject(Context context, String key) throws IOException,
-            ClassNotFoundException {
-        ObjectInputStream in = new ObjectInputStream(new FileInputStream(new File(new File(context.getCacheDir(),"")+key+".srl")));
-        String jsonObject = (String) in.readObject();
-        in.close();
-        return jsonObject;
+    public String getP_name() {
+        return p_name;
+    }
+
+    public void setP_name(String p_name) {
+        this.p_name = p_name;
+    }
+
+    public int getV_id() {
+        return v_id;
+    }
+
+    public void setV_id(int v_id) {
+        this.v_id = v_id;
+    }
+
+    public String getV_color() {
+        return v_color;
+    }
+
+    public void setV_color(String v_color) {
+        this.v_color = v_color;
+    }
+
+    public int getV_size() {
+        return v_size;
+    }
+
+    public void setV_size(int v_size) {
+        this.v_size = v_size;
+    }
+
+    public int getV_price() {
+        return v_price;
+    }
+
+    public void setV_price(int v_price) {
+        this.v_price = v_price;
+    }
+
+    public String getV_most_viewed() {
+        return v_most_viewed;
+    }
+
+    public void setV_most_viewed(String v_most_viewed) {
+        this.v_most_viewed = v_most_viewed;
+    }
+
+    public String getV_most_ordered() {
+        return v_most_ordered;
+    }
+
+    public void setV_most_ordered(String v_most_ordered) {
+        this.v_most_ordered = v_most_ordered;
+    }
+
+    public String getV_most_shared() {
+        return v_most_shared;
+    }
+
+    public void setV_most_shared(String v_most_shared) {
+        this.v_most_shared = v_most_shared;
+    }
+
+    public String getCategory_name() {
+        return category_name;
+    }
+
+    public void setCategory_name(String category_name) {
+        this.category_name = category_name;
     }
 }

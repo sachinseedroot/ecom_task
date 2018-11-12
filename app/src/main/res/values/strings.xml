@@ -1,6 +1,13 @@
 <resources>
-    <string name="app_name">Headecom</string>
+    <string name="app_name">HeadEcom</string>
     <string name="google_maps_key">AIzaSyAl7FdEQY_KAoXI8DGVU1veYDt3N7bwYqY</string>
     <string name="fa_refresh">&#xf021;</string>
-    <string name="fa_back" >&#xf104;</string>
+    <string name="fa_back">&#xf104;</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
 </resources>

@@ -6,28 +6,35 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.sachin.ecom.Fragments.SingleDetailedFragment;
-import com.sachin.ecom.Model.ProductDetails;
+import com.sachin.ecom.Fragments.SubCategoryFragment;
 import com.sachin.ecom.R;
-import com.sachin.ecom.Fragments.ListFragment;
+import com.sachin.ecom.Fragments.CategoryFragment;
+
+import org.json.JSONArray;
 
 import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity {
     private ProgressDialog mProgressDialog;
-    private ListFragment listFragment;
+    private CategoryFragment listFragment;
     private FrameLayout frameLayoutContainer;
     private Stack<Fragment> fragmentStack;
     private SingleDetailedFragment singleDetailFragment;
     private boolean doubleBackToExitPressedOnce = false;
     private Context mcontext;
+    private SubCategoryFragment listsubFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,25 +42,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mcontext = this;
-        Intent intent = getIntent();
-        if(intent!=null && intent.hasExtra("data")) {
-            String data = intent.getStringExtra("data");
-            initialize(data);
-        }else{
-            Toast.makeText(mcontext,"something went wrong",Toast.LENGTH_SHORT).show();
-        }
+        initialize();
     }
 
-    private void initialize(String data) {
+    private void initialize() {
         frameLayoutContainer = (FrameLayout) findViewById(R.id.container);
         fragmentStack = new Stack<Fragment>();
-        loadListFragment(data);
+
+        loadListFragment();
     }
 
-    private void loadListFragment(String data) {
+    private void loadListFragment() {
         try {
             if (listFragment == null) {
-                listFragment = ListFragment.newInstance(data);
+                listFragment = CategoryFragment.newInstance();
             }
             if (listFragment.isAdded()) {
                 return;
@@ -73,10 +75,32 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void loadSingleDetailFragment(ProductDetails id) {
+    public void loadSubListFragment(String data) {
+        try {
+            if (listsubFragment == null) {
+                listsubFragment = SubCategoryFragment.newInstance(data);
+            }
+            if (listsubFragment.isAdded()) {
+                return;
+            }
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.setCustomAnimations(R.anim.enter_from_right, R.anim.hold);
+            ft.add(frameLayoutContainer.getId(), listsubFragment);
+            if (fragmentStack.size() > 0) {
+                fragmentStack.lastElement().onPause();
+                ft.hide(fragmentStack.lastElement());
+            }
+            fragmentStack.push(listsubFragment);
+            ft.commitAllowingStateLoss();
+        } catch (Exception e) {
+            Crashlytics.logException(e);
+        }
+    }
+
+    public void loadSingleDetailFragment(JSONArray jsonArray) {
         try {
 
-            singleDetailFragment = SingleDetailedFragment.newInstance(id);
+            singleDetailFragment = SingleDetailedFragment.newInstance(jsonArray.toString());
 
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.setCustomAnimations(R.anim.enter_from_right, R.anim.hold);
@@ -103,6 +127,10 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        if (drawer.isDrawerOpen(GravityCompat.START)) {
+//            drawer.closeDrawer(GravityCompat.START);
+//        }
 
         if (fragmentStack.size() > 1) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

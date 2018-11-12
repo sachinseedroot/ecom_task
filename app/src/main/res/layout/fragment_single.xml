@@ -24,19 +24,50 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:padding="10dp"
-            android:text="Product Details"
+            android:text="Products"
             android:textColor="@color/white"
             android:textSize="20sp" />
     </RelativeLayout>
-
-
-    <TextView
+    <LinearLayout
+        android:id="@+id/filter"
+        android:layout_below="@+id/headerREL"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="15dp"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Most Viewed"
+            android:textColor="@color/white"
+            android:background="@color/colorAccent"
+            android:gravity="center"
+            android:layout_weight="1"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Most Ordered"
+            android:textColor="@color/white"
+            android:background="@color/colorAccent"
+            android:gravity="center"
+            android:layout_weight="1"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Most Shared"
+            android:textColor="@color/white"
+            android:background="@color/colorAccent"
+            android:gravity="center"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rec_list_product"
+        android:layout_width="match_parent"
         android:background="@color/white"
-        android:textSize="16sp"
-        android:gravity="center"
-        android:id="@+id/descTV"
-       android:layout_alignParentBottom="true"/>
+        android:scrollbars="none"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/filter"
+        android:padding="10dp"/>
 </RelativeLayout>
